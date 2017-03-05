@@ -10,6 +10,7 @@ function getDataFromApi(searchTerm) {
     key: APIkey,
     maxResults: 5,
   }
+  //why cant I do this:  traverseJSON(searchTerm, element)
   $.getJSON(YT_BASE_URL, query, traverseJSON);
 }
 
