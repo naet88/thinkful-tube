@@ -1,0 +1,22 @@
+body {
+  font-family: Roboto;
+}
+
+.main-container {
+  width: 400px;
+  margin: auto;
+}
+
+.results-list {
+  list-style: none;
+  padding-bottom: 15px;
+}
+
+.more-channels {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.form-container {
+ padding-bottom: 30px; 
+}
