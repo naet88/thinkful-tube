@@ -21,7 +21,8 @@ function getDataFromApi(searchTerm, callback) {
 //a function OUTSIDE the "traverseJSON" function. I guess this is how you'd do it? 
 //But, this doesn't actually work at all. 
 
-function buildWatchVideoURL(results) {
+//this function is specialized to manipulate item by item (building blocks)
+function buildWatchVideoURL(item) {
 
   // With regards to the q= part, it is much better practice to use a function to construct 
   // URL queries. Why? Because encoding of certain characters must be taken care of. Turns out, 
@@ -34,21 +35,24 @@ function buildWatchVideoURL(results) {
   var YT_watch_vid_URL = 'https://www.youtube.com/watch?v=';
   var resultsVideoURL = '';
   
-  results.items.forEach(function(item) {
-    resultsVideoURL = YT_watch_vid_URL + item.id.videoId;
-  });
+  resultsVideoURL = YT_watch_vid_URL + item.id.videoId;
+  
+  //need this. because if you don't return this variable, the variable dies b/c this variable lives in the scope of this function only. 
+  return resultsVideoURL;
 }
 
-function buildChannelURL(results) {
+function buildChannelURL(item) {
   var YT_channel_URL = 'https://www.youtube.com/channel/'
   var channelURL = '';
   
-  results.items.forEach(function(item) {
-    channelURL= YT_channel_URL + item.snippet.channelId;
-  }); 
+  channelURL= YT_channel_URL + item.snippet.channelId;
+  
+  return channelURL;
 }
 
 //why cant I do this:  traverseJSON(results, element)
+//this function's responsibility is to solely manipualate the results as a whole. 
+
 function traverseJSON(results) {
   
   var imgThumbnailURL = '';
@@ -59,12 +63,11 @@ function traverseJSON(results) {
 
   results.items.forEach(function(item) {
 
-    //this is probably wrong. 
-    buildWatchVideoURL(results);
-    buildChannelURL(resuts);
+    var watchVideoURL = buildWatchVideoURL(item);
+    var channelURL = buildChannelURL(item);
     imgThumbnailURL = item.snippet.thumbnails.medium.url;
 
-    htmlObject += '<li class="results-list"><a href="' + resultsVideoURL + '" target="_blank"><img src="' + imgThumbnailURL + '"></a></li>' + '<div class="more-channels"><a href="'+ channelURL + '" target="_blank">Find more videos from this channel </a></div>' ; 
+    htmlObject += '<li class="results-list"><a href="' + watchVideoURL + '" target="_blank"><img src="' + imgThumbnailURL + '"></a></li>' + '<div class="more-channels"><a href="'+ channelURL + '" target="_blank">Find more videos from this channel </a></div>' ; 
   });
 
   $('.js-search-results').html(htmlObject);
