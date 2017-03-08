@@ -11,7 +11,7 @@ function getDataFromApi(searchTerm, pageToken, callback) {
     maxResults: 5,
     pageToken: pageToken,
   }
-  
+   
   $.getJSON(YT_BASE_URL, query, callback);
 }
 
@@ -42,7 +42,6 @@ function renderSearchPage(state, element) {
 
 function renderResultsPage(state, element) {
   $(element).find('.js-results-page').show();
-
 }
 
 //Functions that modify the state
@@ -75,8 +74,6 @@ function traverseJSON(results) {
   var channelUser = '';
   var htmlObject = ''; 
 
-  console.log(nextPage(results.nextPageToken));
-
   results.items.forEach(function(item) {
 
     var watchVideoURL = buildWatchVideoURL(item);
@@ -86,6 +83,9 @@ function traverseJSON(results) {
 
     htmlObject += '<li class="results-list"><a href="' + watchVideoURL + '" target="_blank"><img src="' + imgThumbnailURL + '"></a></li>' + '<div class="more-channels"><a href="'+ channelURL + '" target="_blank">Find more videos from this channel </a></div>' ; 
   });
+
+  //html() "clears" everything. 
+  //append() works too. 
 
   $('.js-thumbnail-list').html(htmlObject);
 
@@ -116,8 +116,6 @@ $('button.js-next-page').on('click', function(event) {
   event.preventDefault();
 
   getDataFromApi(state.userQuery, state.nextPageToken, traverseJSON);
-
-
 })
 
 
