@@ -14,6 +14,30 @@ function getDataFromApi(searchTerm, callback) {
   $.getJSON(YT_BASE_URL, query, callback);
 }
 
+//the state
+
+var state = {
+  page: 'search',
+  nextPageToken: '',
+}
+
+//state modification functions 
+
+function renderSearchPage(state, element) {
+  $(element).find('.js-search-results').hide();
+  $(element).find('.js-search-form').show();
+
+}
+
+function renderResultsPage(state, element) {
+  $(element).find('.js-search-results').show();
+  $(element).find('.js-search-form').hide();
+  state.page = 'results';
+}
+
+//Functions that modify the state
+
+
 //build URLs
 
 //NOTES TO ERIC: 
@@ -31,26 +55,20 @@ function buildWatchVideoURL(item) {
   //look like this: https://www.youtube.com/watch?v=[id here], so it doesn't need a function to 
   //construt a URL query, does it? 
 
-
-  var YT_watch_vid_URL = 'https://www.youtube.com/watch?v=';
-  var resultsVideoURL = '';
-  
-  resultsVideoURL = YT_watch_vid_URL + item.id.videoId;
-  
   //need this. because if you don't return this variable, the variable dies b/c this variable lives in the scope of this function only. 
-  return resultsVideoURL;
+  return 'https://www.youtube.com/watch?v=' + item.id.videoId;
 }
 
-function buildChannelURL(item) {
-  var YT_channel_URL = 'https://www.youtube.com/channel/'
-  var channelURL = '';
-  
-  channelURL= YT_channel_URL + item.snippet.channelId;
-  
-  return channelURL;
+function buildChannelURL(item) {  
+  return 'https://www.youtube.com/channel/' + item.snippet.channelId;
 }
 
-//why cant I do this:  traverseJSON(results, element)
+function nextPage(token) {
+  return state.nextPageToken = token;
+}
+
+//DOM Rendering 
+
 //this function's responsibility is to solely manipualate the results as a whole. 
 
 function traverseJSON(results) {
@@ -59,33 +77,46 @@ function traverseJSON(results) {
   var videoId = '';
   var channelUser = '';
   var htmlObject = ''; 
-  var nextPage = results.nextPageToken;
+
+  nextPage(results.nextPageToken);
 
   results.items.forEach(function(item) {
 
     var watchVideoURL = buildWatchVideoURL(item);
     var channelURL = buildChannelURL(item);
+
     imgThumbnailURL = item.snippet.thumbnails.medium.url;
 
     htmlObject += '<li class="results-list"><a href="' + watchVideoURL + '" target="_blank"><img src="' + imgThumbnailURL + '"></a></li>' + '<div class="more-channels"><a href="'+ channelURL + '" target="_blank">Find more videos from this channel </a></div>' ; 
   });
 
+  //$(element).html(htmlObject);
   $('.js-search-results').html(htmlObject);
 
 }
 
 //event listener
 
+renderSearchPage(state, '.js-main');
+
+
 $('form').on('submit', function(event) {
   event.preventDefault();
-  
+
+  renderResultsPage(state, '.js-main');  
+
   var userQuery = $(this).find('.js-query').val();
 
   //why cant I do this:  traverseJSON(searchTerm, '.js-search-results')
   getDataFromApi(userQuery, traverseJSON);
 
-
 });
+
+$('button.js-next-page').on('click', function(event) {
+  event.preventDefault();
+
+
+})
 
 
 
