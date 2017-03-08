@@ -24,14 +24,14 @@ var state = {
 //state modification functions 
 
 function renderSearchPage(state, element) {
-  $(element).find('.js-search-results').hide();
-  $(element).find('.js-search-form').show();
+  $(element).find('.js-results-page').hide();
+  $(element).find('.js-search-page').show();
 
 }
 
 function renderResultsPage(state, element) {
-  $(element).find('.js-search-results').show();
-  $(element).find('.js-search-form').hide();
+  $(element).find('.js-results-page').show();
+  $(element).find('.js-search-page').hide();
   state.page = 'results';
 }
 
@@ -91,7 +91,7 @@ function traverseJSON(results) {
   });
 
   //$(element).html(htmlObject);
-  $('.js-search-results').html(htmlObject);
+  $('.js-thumbnail-list').html(htmlObject);
 
 }
 
